@@ -150,8 +150,12 @@ fn parse_u64(value: &str) -> u64 {
 
 fn parse_str_to_u64(value: &str) -> u64 {
     let split = value.split_at(value.len() - 1);
+    
+    let num = match value.parse::<u64>() {
+        Ok(t) => t,
+        Err(_) => 0,
+    };
 
-    let num = parse_u64(split.0);
     match split.1 {
         "P" => 1125899906842624 * num,
         "T" => 1099511627776 * num,
