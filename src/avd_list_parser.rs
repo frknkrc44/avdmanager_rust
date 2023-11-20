@@ -115,7 +115,7 @@ pub struct AvdItem {
     pub image_sys_dir: String,
     pub runtime_network_latency: String,
     pub runtime_network_speed: String,
-    pub sd_card_size: String,
+    pub sd_card_size: u64,
     pub show_device_frame: bool,
     pub skin_dynamic: bool,
     pub skin_name: String,
@@ -131,6 +131,35 @@ fn read_file_content(path: String) -> String {
     let mut contents = String::new();
     let _ = file.read_to_string(&mut contents);
     return contents;
+}
+
+fn parse_u16(value: &str) -> u16 {
+    parse_u32(value) as u16
+}
+
+fn parse_u32(value: &str) -> u32 {
+    parse_u64(value) as u32
+}
+
+fn parse_u64(value: &str) -> u64 {
+    match value.parse::<u64>() {
+        Ok(t) => return t,
+        Err(_) => return parse_str_to_u64(value),
+    }
+}
+
+fn parse_str_to_u64(value: &str) -> u64 {
+    let split = value.split_at(value.len() - 1);
+
+    let num = parse_u64(split.0);
+    match split.1 {
+        "P" => 1125899906842624 * num,
+        "T" => 1099511627776 * num,
+        "G" => 1073741824 * num,
+        "M" => 1048576 * num,
+        "K" => 1024 * num,
+        _ => return 0,
+    }
 }
 
 fn parse_file(path: String) -> AvdItem {
@@ -175,7 +204,7 @@ fn parse_file(path: String) -> AvdItem {
     let mut image_sys_dir: String = String::new();
     let mut runtime_network_latency: String = String::new();
     let mut runtime_network_speed: String = String::new();
-    let mut sd_card_size: String = String::new();
+    let mut sd_card_size: u64 = 0;
     let mut show_device_frame: bool = false;
     let mut skin_dynamic: bool = false;
     let mut skin_name: String = String::new();
@@ -194,7 +223,7 @@ fn parse_file(path: String) -> AvdItem {
             _ABI_TYPE_KEY => abi_type = pair[1].trim().to_string(),
             _AVD_DISPLAY_NAME_KEY => avd_display_name = pair[1].trim().to_string(),
             _AVD_ENCODING_KEY => avd_encoding = pair[1].trim().to_string(),
-            _USERDATA_SIZE_KEY => userdata_size = pair[1].trim().parse::<u64>().unwrap(),
+            _USERDATA_SIZE_KEY => userdata_size = parse_u64(pair[1].trim()),
             _FASTBOOT_CHOSEN_SNAPSHOT_FILE_KEY => fastboot_chosen_snapshot_file = pair[1].trim().to_string(),
             _FASTBOOT_FORCE_CHOSEN_SNAPSHOT_BOOT_KEY => fastboot_force_chosen_snapshot_boot = pair[1].trim() == "yes",
             _FASTBOOT_FORCE_COLD_BOOT_KEY => fastboot_force_cold_boot = pair[1].trim() == "yes",
@@ -206,7 +235,7 @@ fn parse_file(path: String) -> AvdItem {
             _HW_CAMERA_BACK_KEY => hw_camera_back = pair[1].trim().to_string(),
             _HW_CAMERA_FRONT_KEY => hw_camera_front = pair[1].trim().to_string(),
             _HW_CPU_ARCH_KEY => hw_cpu_arch = pair[1].trim().to_string(),
-            _HW_CPU_NCORE_KEY => hw_cpu_ncore = pair[1].trim().parse::<u16>().unwrap(),
+            _HW_CPU_NCORE_KEY => hw_cpu_ncore = parse_u16(pair[1].trim()),
             _HW_DPAD_KEY => hw_dpad = pair[1].trim() == "yes",
             _HW_DEVICE_HASH2_KEY => hw_device_hash2 = pair[1].trim().to_string(),
             _HW_DEVICE_MANUFACTURER_KEY => hw_device_manufacturer = pair[1].trim().to_string(),
@@ -217,11 +246,11 @@ fn parse_file(path: String) -> AvdItem {
             _HW_INITIAL_ORIENTATION_KEY => hw_initial_orientation = pair[1].trim().to_string(),
             _HW_KEYBOARD_KEY => hw_keyboard = pair[1].trim() == "yes",
             _HW_MAIN_KEYS_KEY => hw_main_keys = pair[1].trim() == "yes",
-            _HW_LCD_DENSITY_KEY => hw_lcd_density = pair[1].trim().parse::<u16>().unwrap(),
-            _HW_LCD_HEIGHT_KEY => hw_lcd_height = pair[1].trim().parse::<u16>().unwrap(),
-            _HW_LCD_WIDTH_KEY => hw_lcd_width = pair[1].trim().parse::<u16>().unwrap(),
+            _HW_LCD_DENSITY_KEY => hw_lcd_density = parse_u16(pair[1].trim()),
+            _HW_LCD_HEIGHT_KEY => hw_lcd_height = parse_u16(pair[1].trim()),
+            _HW_LCD_WIDTH_KEY => hw_lcd_width = parse_u16(pair[1].trim()),
             _HW_MAIN_KEYS_KEY => hw_main_keys = pair[1].trim() == "yes",
-            _HW_RAM_SIZE_KEY => hw_ram_size = pair[1].trim().parse::<u32>().unwrap(),
+            _HW_RAM_SIZE_KEY => hw_ram_size = parse_u32(pair[1].trim()),
             _HW_SD_CARD_KEY => hw_sd_card = pair[1].trim() == "yes",
             _HW_SENSORS_ORIENTATION_KEY => hw_sensors_orientation = pair[1].trim() == "yes",
             _HW_SENSORS_PROXIMITY_KEY => hw_sensors_proximity = pair[1].trim() == "yes",
@@ -229,7 +258,7 @@ fn parse_file(path: String) -> AvdItem {
             _IMAGE_SYS_DIR_KEY => image_sys_dir = pair[1].trim().to_string(),
             _RUNTIME_NETWORK_LATENCY_KEY => runtime_network_latency = pair[1].trim().to_string(),
             _RUNTIME_NETWORK_SPEED_KEY => runtime_network_speed = pair[1].trim().to_string(),
-            _SD_CARD_SIZE_KEY => sd_card_size = pair[1].trim().to_string(),
+            _SD_CARD_SIZE_KEY => sd_card_size = parse_u64(pair[1].trim()),
             _SHOW_DEVICE_FRAME_KEY => show_device_frame = pair[1].trim() == "yes",
             _SKIN_DYNAMIC_KEY => skin_dynamic = pair[1].trim() == "yes",
             _SKIN_NAME_KEY => skin_name = pair[1].trim().to_string(),
@@ -237,7 +266,7 @@ fn parse_file(path: String) -> AvdItem {
             _SKIN_PATH_BACKUP_KEY => skin_path_backup = pair[1].trim().to_string(),
             _TAG_DISPLAY_KEY => tag_display = pair[1].trim().to_string(),
             _TAG_ID_KEY => tag_id = pair[1].trim().to_string(),
-            _VM_HEAP_SIZE_KEY => vm_heap_size = pair[1].trim().parse::<u16>().unwrap(),
+            _VM_HEAP_SIZE_KEY => vm_heap_size = parse_u16(pair[1].trim()),
             _ => {}
         }
     }

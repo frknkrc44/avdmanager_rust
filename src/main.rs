@@ -21,6 +21,6 @@ fn main() {
     let avds = avd_list_parser::list_avds();
 
     for avd in avds {
-        println!("{}", avd.avd_display_name);
+        println!("{}, {}", avd.avd_display_name, avd.userdata_size);
     }
 }
