@@ -150,12 +150,12 @@ fn parse_u64(value: &str) -> u64 {
 
 fn parse_str_to_u64(value: &str) -> u64 {
     let split = value.split_at(value.len() - 1);
-    
-    let num = match value.parse::<u64>() {
+
+    let num: u64 = match split.0.parse::<u64>() {
         Ok(t) => t,
         Err(_) => 0,
     };
-
+    
     match split.1 {
         "P" => 1125899906842624 * num,
         "T" => 1099511627776 * num,
@@ -219,7 +219,7 @@ fn parse_file(path: String) -> AvdItem {
     let mut vm_heap_size: u16 = 0;
 
     for line in contents.lines() {
-        let pair: Vec<&str> = line.split("=").collect();
+        let pair: Vec<&str> = line.splitn(2, "=").collect();
 
         match pair[0].trim() {
             _AVD_ID_KEY => avd_id = pair[1].trim().to_string(),
