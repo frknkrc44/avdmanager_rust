@@ -329,9 +329,17 @@ pub fn list_avds() -> LinkedList<AvdItem> {
     let sdk_home: String = env::var("ANDROID_SDK_HOME").expect("Please set ANDROID_SDK_HOME variable!");
     let mut out: LinkedList<AvdItem> = LinkedList::new();
 
-    let avd_dir: String = sdk_home + "/.android/avd";
+    let android_dir: &str = ".android/avd";
+    let mut avd_dir: String = sdk_home + "/" + android_dir;
     if ! Path::new(&avd_dir).exists() {
-        return out;
+        let home: String = env::var("HOME").expect("Please set HOME variable!");
+        let avd_alt_dir: String = home + "/" + android_dir;
+
+        if Path::new(&avd_alt_dir).exists() {
+           avd_dir = avd_alt_dir;
+        } else {
+            return out;
+        }
     }
 
     let items: ReadDir = fs::read_dir(avd_dir).unwrap();
