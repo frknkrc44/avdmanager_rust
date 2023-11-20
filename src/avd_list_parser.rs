@@ -18,6 +18,7 @@
 #![allow(dead_code)]
 #![allow(unreachable_patterns)]
 
+use crate::avd_item::AvdItem;
 use std::collections::LinkedList;
 use std::env;
 use std::fs;
@@ -75,57 +76,6 @@ const _TAG_DISPLAY_KEY: &str = "tag.display";
 const _TAG_ID_KEY: &str = "tag.id";
 const _VM_HEAP_SIZE_KEY: &str = "vm.heapSize";
 
-pub struct AvdItem {
-    pub avd_id: String,
-    pub play_store_enabled: bool,
-    pub abi_type: String,
-    pub avd_display_name: String,
-    pub avd_encoding: String,
-    pub userdata_size: u64,
-    pub fastboot_chosen_snapshot_file: String,
-    pub fastboot_force_chosen_snapshot_boot: bool,
-    pub fastboot_force_cold_boot: bool,
-    pub fastboot_force_fast_boot: bool,
-    pub hw_accelerometer: bool,
-    pub hw_arc: bool,
-    pub hw_audio_input: bool,
-    pub hw_battery: bool,
-    pub hw_camera_back: String,
-    pub hw_camera_front: String,
-    pub hw_cpu_arch: String,
-    pub hw_cpu_ncore: u16,
-    pub hw_dpad: bool,
-    pub hw_device_hash2: String,
-    pub hw_device_manufacturer: String,
-    pub hw_device_name: String,
-    pub hw_gps: bool,
-    pub hw_gpu_enabled: bool,
-    pub hw_gpu_mode: String,
-    pub hw_initial_orientation: String,
-    pub hw_keyboard: bool,
-    pub hw_lcd_density: u16,
-    pub hw_lcd_height: u16,
-    pub hw_lcd_width: u16,
-    pub hw_main_keys: bool,
-    pub hw_ram_size: u32,
-    pub hw_sd_card: bool,
-    pub hw_sensors_orientation: bool,
-    pub hw_sensors_proximity: bool,
-    pub hw_track_ball: bool,
-    pub image_sys_dir: String,
-    pub runtime_network_latency: String,
-    pub runtime_network_speed: String,
-    pub sd_card_size: u64,
-    pub show_device_frame: bool,
-    pub skin_dynamic: bool,
-    pub skin_name: String,
-    pub skin_path: String,
-    pub skin_path_backup: String,
-    pub tag_display: String,
-    pub tag_id: String,
-    pub vm_heap_size: u16,
-}
-
 fn read_file_content(path: String) -> String {
     let mut file = File::open(path).unwrap();
     let mut contents = String::new();
@@ -155,14 +105,14 @@ fn parse_str_to_u64(value: &str) -> u64 {
         Ok(t) => t,
         Err(_) => 0,
     };
-    
+
     match split.1 {
         "P" => 1125899906842624 * num,
         "T" => 1099511627776 * num,
         "G" => 1073741824 * num,
         "M" => 1048576 * num,
         "K" => 1024 * num,
-        _ => return 0,
+        _ => 0,
     }
 }
 
@@ -274,7 +224,6 @@ fn parse_file(path: String) -> AvdItem {
             _ => {}
         }
     }
-
 
     AvdItem {
         avd_id: avd_id,

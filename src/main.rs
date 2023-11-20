@@ -15,6 +15,7 @@
  *   along with avdmanager_rust.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+mod avd_item;
 mod avd_list_parser;
 
 fn main() {
