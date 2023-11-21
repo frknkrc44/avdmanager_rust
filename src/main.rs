@@ -19,11 +19,11 @@ use std::collections::LinkedList;
 
 mod avd_item;
 mod r#const;
-mod avd_list_parser;
+mod avd_funcs;
 mod parser_funcs;
 
 fn main() {
-    let avds: LinkedList<avd_item::AvdItem> = avd_list_parser::list_avds();
+    let avds: LinkedList<avd_item::AvdItem> = avd_funcs::list_avds();
 
     for avd in avds {
         println!("{}, {}", avd.avd_display_name, avd.userdata_size);
