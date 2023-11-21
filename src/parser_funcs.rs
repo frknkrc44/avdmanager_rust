@@ -16,7 +16,7 @@
  */
 
 use crate::avd_item::AvdItem;
-use crate::avd_item_keys::*;
+use crate::r#const::*;
 
 pub fn parse_u16(value: &str) -> u16 {
     parse_u32(value) as u16
@@ -28,8 +28,8 @@ pub fn parse_u32(value: &str) -> u32 {
 
 pub fn parse_u64(value: &str) -> u64 {
     match value.parse::<u64>() {
-        Ok(t) => return t,
-        Err(_) => return parse_str_to_u64(value),
+        Ok(t) => t,
+        Err(_) => parse_str_to_u64(value),
     }
 }
 
@@ -42,38 +42,38 @@ pub fn parse_str_to_u64(value: &str) -> u64 {
     };
 
     match split.1 {
-        "P" => 1125899906842624 * num,
-        "T" => 1099511627776 * num,
-        "G" => 1073741824 * num,
-        "M" => 1048576 * num,
-        "K" => 1024 * num,
+        "P" => PIB * num,
+        "T" => TIB * num,
+        "G" => GIB * num,
+        "M" => MIB * num,
+        "K" => KIB * num,
         _ => 0,
     }
 }
 
 
 fn parse_u64_to_str<'a>(value: u64) -> String {
-    if value <= 1024 {
+    if value <= KIB {
         return value.to_string()
     }
 
-    if value <= 1048576 {
-        return (value / 1024).to_string() + "K"
+    if value <= MIB {
+        return (value / KIB).to_string() + "K"
     }
 
-    if value <= 1073741824 {
-        return (value / 1048576).to_string() + "M"
+    if value <= GIB {
+        return (value / MIB).to_string() + "M"
     }
 
-    if value <= 1099511627776 {
-        return (value / 1073741824).to_string() + "G"
+    if value <= TIB {
+        return (value / GIB).to_string() + "G"
     }
 
-    if value <= 1125899906842624 {
-        return (value / 1099511627776).to_string() + "T"
+    if value <= PIB {
+        return (value / TIB).to_string() + "T"
     }
 
-    return (value / 1125899906842624).to_string() + "P"
+    (value / PIB).to_string() + "P"
 }
 
 fn parse_u16_to_ini(key: &str, value: u16) -> String {

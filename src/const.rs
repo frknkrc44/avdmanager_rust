@@ -63,3 +63,9 @@ pub const _SKIN_PATH_BACKUP_KEY: &str = "skin.path.backup";
 pub const _TAG_DISPLAY_KEY: &str = "tag.display";
 pub const _TAG_ID_KEY: &str = "tag.id";
 pub const _VM_HEAP_SIZE_KEY: &str = "vm.heapSize";
+
+pub const KIB: u64 = 1024;
+pub const MIB: u64 = KIB * KIB ;
+pub const GIB: u64 = MIB * KIB ;
+pub const TIB: u64 = GIB * KIB ;
+pub const PIB: u64 = TIB * KIB ;
