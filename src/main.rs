@@ -15,13 +15,19 @@
  *   along with avdmanager_rust.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use std::collections::LinkedList;
+
 mod avd_item;
+mod avd_item_keys;
 mod avd_list_parser;
+mod parser_funcs;
 
 fn main() {
-    let avds = avd_list_parser::list_avds();
+    let avds: LinkedList<avd_item::AvdItem> = avd_list_parser::list_avds();
 
     for avd in avds {
         println!("{}, {}", avd.avd_display_name, avd.userdata_size);
+        let parsed: String = parser_funcs::parse_avd_to_ini(avd);
+        println!("{}", parsed);
     }
 }
