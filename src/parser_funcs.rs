@@ -18,6 +18,8 @@
 #![allow(dead_code)]
 #![allow(unreachable_patterns)]
 
+use slint::{StandardListViewItem, SharedString};
+
 use crate::avd_item::AvdItem;
 use crate::r#const::*;
 use std::fs::File;
@@ -136,12 +138,15 @@ pub fn parse_ini_to_avd(path: String) -> AvdItem {
         }
     }
 
+    let sdk_level = parse_u16(&image_sys_dir.split("/").nth(1).unwrap().replace("android-", ""));
+
     AvdItem {
         avd_id: avd_id,
         play_store_enabled: play_store_enabled,
         abi_type: abi_type,
         avd_display_name: avd_display_name,
         avd_encoding: avd_encoding,
+        avd_sdk_level: sdk_level,
         userdata_size: userdata_size,
         fastboot_chosen_snapshot_file: fastboot_chosen_snapshot_file,
         fastboot_force_chosen_snapshot_boot: fastboot_force_chosen_snapshot_boot,
@@ -259,6 +264,13 @@ pub fn parse_avd_to_ini(item: AvdItem) -> String {
     out += &parse_u16_to_ini(_VM_HEAP_SIZE_KEY, item.vm_heap_size);
 
     out
+}
+
+pub fn get_list_view_item(text: &str) -> StandardListViewItem {
+    let shared_string = SharedString::from(text);
+    let mut std_list_view_item = StandardListViewItem::default();
+    std_list_view_item.text = shared_string;
+    std_list_view_item
 }
 
 fn read_file_content(path: String) -> String {

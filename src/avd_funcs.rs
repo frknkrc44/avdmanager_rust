@@ -15,8 +15,10 @@
  *   along with avdmanager_rust.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use slint::{StandardListViewItem, ModelRc, VecModel};
+
 use crate::avd_item::AvdItem;
-use crate::parser_funcs::parse_ini_to_avd;
+use crate::parser_funcs::*;
 use std::collections::LinkedList;
 use std::env::var;
 use std::fs::read_dir;
@@ -52,4 +54,18 @@ pub fn list_avds() -> LinkedList<AvdItem> {
     }
 
     out
+}
+
+pub fn get_avds_as_slint_model() -> ModelRc<ModelRc<StandardListViewItem>> {
+    let vecs: Vec<ModelRc<StandardListViewItem>> = list_avds().iter().map(|s| {
+        let item = vec!(
+            get_list_view_item(&s.avd_display_name),
+            get_list_view_item(&s.avd_sdk_level.to_string()),
+            get_list_view_item(&s.tag_display),
+        );
+
+        ModelRc::new(VecModel::from(item))
+    }).collect();
+
+    ModelRc::new(VecModel::from(vecs))
 }

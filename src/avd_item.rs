@@ -15,12 +15,14 @@
  *   along with avdmanager_rust.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ #[derive(Clone)]
 pub struct AvdItem {
     pub avd_id: String,
     pub play_store_enabled: bool,
     pub abi_type: String,
     pub avd_display_name: String,
     pub avd_encoding: String,
+    pub avd_sdk_level: u16,
     pub userdata_size: u64,
     pub fastboot_chosen_snapshot_file: String,
     pub fastboot_force_chosen_snapshot_boot: bool,

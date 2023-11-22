@@ -1,17 +1,16 @@
-import { Button, VerticalBox } from "std-widgets.slint";
+import {Button, VerticalBox, StandardTableView} from "std-widgets.slint";
 
 export component AppWindow inherits Window {
-    in property <string> avdlist: "";
-    callback request-avd-list();
+    in property <[[StandardListViewItem]]> avdlist: [];
+
     VerticalBox {
-        Text {
-            text: "Avd: \{root.avdlist}";
-        }
-        Button {
-            text: "Get Avd List";
-            clicked => {
-                root.request-avd-list();
-            }
+        StandardTableView {
+            columns: [
+                { title: "Name" },
+                { title: "SDK Level" },
+                { title: "Tag" },
+            ];
+            rows: root.avdlist;
         }
     }
 }

@@ -15,7 +15,7 @@
  *   along with avdmanager_rust.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use std::collections::LinkedList;
+use slint::{WindowSize, LogicalSize};
 slint::include_modules!();
 
 mod avd_funcs;
@@ -24,22 +24,8 @@ mod r#const;
 mod parser_funcs;
 
 fn main() -> Result<(), slint::PlatformError> {
-    let avds: LinkedList<avd_item::AvdItem> = avd_funcs::list_avds();
-    let mut avd_names: String = String::new();
-    for avd in avds {
-        //println!("{}, {}", avd.avd_display_name, avd.userdata_size);
-        //let parsed: String = parser_funcs::parse_avd_to_ini(avd);
-        avd_names = avd.avd_display_name + "\n" + &avd_names;
-        //println!("{}", parsed);
-    }
-
     let ui = AppWindow::new()?;
-
-    let ui_handle = ui.as_weak();
-    ui.on_request_avd_list(move || {
-        let ui = ui_handle.unwrap();
-        ui.set_avdlist(ui.get_avdlist() + &avd_names);
-    });
-
+    ui.window().set_size(WindowSize::Logical(LogicalSize::new(640 as f32, 480 as f32)));
+    ui.set_avdlist(avd_funcs::get_avds_as_slint_model());
     ui.run()
 }
