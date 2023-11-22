@@ -29,12 +29,12 @@ pub fn list_avds() -> LinkedList<AvdItem> {
     let android_dir: &str = ".android/avd";
     let mut avd_dir: String = sdk_home + "/" + android_dir;
 
-    if ! Path::new(&avd_dir).exists() {
+    if !Path::new(&avd_dir).exists() {
         let home: String = var("HOME").expect("Please set HOME variable!");
         let avd_alt_dir: String = home + "/" + android_dir;
 
         if Path::new(&avd_alt_dir).exists() {
-           avd_dir = avd_alt_dir;
+            avd_dir = avd_alt_dir;
         } else {
             return out;
         }
@@ -43,7 +43,7 @@ pub fn list_avds() -> LinkedList<AvdItem> {
     for file in read_dir(avd_dir).unwrap() {
         let mut path: String = file.unwrap().path().display().to_string();
 
-        if ! path.ends_with(".avd") {
+        if !path.ends_with(".avd") {
             continue;
         }
 

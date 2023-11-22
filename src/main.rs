@@ -18,12 +18,10 @@
 use std::collections::LinkedList;
 slint::include_modules!();
 
-
+mod avd_funcs;
 mod avd_item;
 mod r#const;
-mod avd_funcs;
 mod parser_funcs;
-
 
 fn main() -> Result<(), slint::PlatformError> {
     let avds: LinkedList<avd_item::AvdItem> = avd_funcs::list_avds();
@@ -33,7 +31,6 @@ fn main() -> Result<(), slint::PlatformError> {
         //let parsed: String = parser_funcs::parse_avd_to_ini(avd);
         avd_names = avd.avd_display_name + "\n" + &avd_names;
         //println!("{}", parsed);
-        
     }
 
     let ui = AppWindow::new()?;
@@ -46,6 +43,3 @@ fn main() -> Result<(), slint::PlatformError> {
 
     ui.run()
 }
-
-
-
