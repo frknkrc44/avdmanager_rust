@@ -62,6 +62,7 @@ pub fn get_avds_as_slint_model() -> ModelRc<ModelRc<StandardListViewItem>> {
             get_list_view_item(&s.avd_display_name),
             get_list_view_item(&s.avd_sdk_level.to_string()),
             get_list_view_item(&s.tag_display),
+            get_list_view_item(&s.abi_type),
         );
 
         ModelRc::new(VecModel::from(item))

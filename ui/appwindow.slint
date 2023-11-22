@@ -1,16 +1,56 @@
-import {Button, VerticalBox, StandardTableView} from "std-widgets.slint";
+import {Button, VerticalBox, StandardTableView, HorizontalBox} from "std-widgets.slint";
 
 export component AppWindow inherits Window {
+    title: "AVD Manager";
+
     in property <[[StandardListViewItem]]> avdlist: [];
 
-    VerticalBox {
-        StandardTableView {
+    HorizontalBox {
+        table := StandardTableView {
             columns: [
                 { title: "Name" },
                 { title: "SDK Level" },
                 { title: "Tag" },
+                { title: "ABI" },
             ];
             rows: root.avdlist;
+        }
+
+        VerticalBox {
+            new_btn := Button {
+                text: "New";
+                enabled: false;
+            }
+
+            edit_btn := Button {
+                text: "Edit";
+                enabled: false;
+            }
+
+            delete_btn := Button {
+                text: "Delete";
+                enabled: false;
+            }
+
+            repair_btn := Button {
+                text: "Repair";
+                enabled: false;
+            }
+
+            details_btn := Button {
+                text: "Details";
+                enabled: false;
+            }
+
+            start_btn := Button {
+                text: "Start";
+                enabled: false;
+            }
+
+            refresh_btn := Button {
+                text: "Refresh";
+                enabled: false;
+            }
         }
     }
 }
