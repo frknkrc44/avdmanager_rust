@@ -3,6 +3,8 @@ import {Button, VerticalBox, StandardTableView, HorizontalBox} from "std-widgets
 export component AppWindow inherits Window {
     title: "AVD Manager";
 
+    property <length> btn-height : 32px;
+
     in property <[[StandardListViewItem]]> avdlist: [];
 
     HorizontalBox {
@@ -19,37 +21,44 @@ export component AppWindow inherits Window {
         VerticalBox {
             new_btn := Button {
                 text: "New";
-                enabled: false;
+                height: btn-height;
             }
 
             edit_btn := Button {
                 text: "Edit";
                 enabled: false;
+                height: btn-height;
             }
 
             delete_btn := Button {
                 text: "Delete";
                 enabled: false;
+                height: btn-height;
             }
 
             repair_btn := Button {
                 text: "Repair";
                 enabled: false;
+                height: btn-height;
             }
 
             details_btn := Button {
                 text: "Details";
                 enabled: false;
+                height: btn-height;
             }
 
             start_btn := Button {
                 text: "Start";
                 enabled: false;
+                height: btn-height;
             }
+
+            VerticalBox { height: btn-height * 4; }
 
             refresh_btn := Button {
                 text: "Refresh";
-                enabled: false;
+                height: btn-height;
             }
         }
     }
