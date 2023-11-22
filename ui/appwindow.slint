@@ -1,0 +1,17 @@
+import { Button, VerticalBox } from "std-widgets.slint";
+
+export component AppWindow inherits Window {
+    in property <string> avdlist: "";
+    callback request-avd-list();
+    VerticalBox {
+        Text {
+            text: "Avd: \{root.avdlist}";
+        }
+        Button {
+            text: "Get Avd List";
+            clicked => {
+                root.request-avd-list();
+            }
+        }
+    }
+}
