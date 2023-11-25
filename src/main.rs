@@ -44,7 +44,7 @@ fn on_row_changed(row: i32, ui_handle: &Weak<AppWindow>, avds: &Rc<RefCell<AvdLi
     let info = binding.iter().nth(row as usize).unwrap();
     let mut cmd = Command::new("pgrep");
 
-    let cmd_output = match cmd.arg("qemu-system-").output() {
+    let cmd_output = match cmd.arg("-a").arg("qemu-system-").output() {
         Ok(a) => a,
         Err(_) => Output {
             status: ExitStatus::default(),
@@ -54,7 +54,9 @@ fn on_row_changed(row: i32, ui_handle: &Weak<AppWindow>, avds: &Rc<RefCell<AvdLi
     };
 
     let out = String::from_utf8(cmd_output.stdout.to_vec()).unwrap();
-    let out = out.split('\n').find(|e| e.ends_with(&info.avd_id)).unwrap_or("").trim();
+    let choose1 = "-avd ".to_owned() + &info.avd_id;
+    let choose2 = "@".to_owned() + &info.avd_id;
+    let out = out.split('\n').find(|e| e.contains(&choose1) || e.contains(&choose2)).unwrap_or("").trim();
 
     ui.set_details_btn_enabled(true);
     ui.set_edit_btn_enabled(out.is_empty());
