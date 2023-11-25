@@ -23,9 +23,11 @@ use std::collections::LinkedList;
 use std::env::var;
 use std::fs::read_dir;
 use std::path::Path;
+use std::process::{Command, Output, ExitStatus};
 
 pub type AvdList = LinkedList<AvdItem>;
 pub type AvdRows = ModelRc<ModelRc<StandardListViewItem>>;
+pub type RunningList = LinkedList<(u32, String)>;
 
 pub fn list_avds() -> AvdList {
     let sdk_home: String = var("ANDROID_SDK_HOME").expect("Please set ANDROID_SDK_HOME variable!");
@@ -72,4 +74,47 @@ pub fn convert_avd_list_to_slint_model(items: &AvdList) -> AvdRows {
     }).collect();
 
     ModelRc::new(VecModel::from(vecs))
+}
+
+pub fn get_default_output() -> Output {
+    Output {
+        status: ExitStatus::default(),
+        stdout: Vec::new(),
+        stderr: Vec::new(),
+    }
+}
+
+pub fn filter_running_avds(items: &AvdList) -> RunningList {
+    let mut cmd = Command::new("pgrep");
+    let cmd_output = match cmd.arg("-a").arg("qemu-system-").output() {
+        Ok(a) => a,
+        Err(_) => get_default_output(),
+    };
+
+    let stdout = String::from_utf8(cmd_output.stdout.to_vec()).unwrap();
+    let mut out_list: RunningList = LinkedList::new();
+
+    for item in items.iter() {
+        let id = &item.avd_id;
+        let choose1 = "-avd ".to_owned() + &id;
+        let choose2 = "@".to_owned() + &id;
+        let filter = stdout.split('\n').find(|e| e.contains(&choose1) || e.contains(&choose2)).unwrap_or("").trim();
+        if !filter.is_empty() {
+            let pid = filter.split(' ').nth(0).unwrap_or("").parse::<u32>().unwrap_or(0);
+            out_list.push_back((pid, id.to_string()));
+        }
+    }
+
+    out_list
+}
+
+pub fn is_avd_running(items: &AvdList, avd_id: &str) -> u32 {
+    let running = filter_running_avds(items);
+    let contains: Vec<&(u32, String)> = running.iter().filter(|e| e.1 == avd_id).collect();
+    
+    if contains.is_empty() {
+        0
+    } else {
+        contains.first().unwrap().0
+    }
 }

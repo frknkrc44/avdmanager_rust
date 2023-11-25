@@ -29,6 +29,7 @@ export component AppWindow inherits Window {
     in-out property <bool> repair-btn-enabled: false;
     in-out property <bool> details-btn-enabled: false;
     in-out property <bool> start-btn-enabled: false;
+    in-out property <string> start-btn-title: "Start";
 
     callback edit-btn-press();
     callback delete-btn-press();
@@ -87,7 +88,7 @@ export component AppWindow inherits Window {
 
             start_btn := Button {
                 clicked => { start-btn-press() }
-                text: "Start";
+                text: start-btn-title;
                 enabled: start-btn-enabled;
                 height: btn-height;
             }

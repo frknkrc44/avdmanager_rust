@@ -17,7 +17,7 @@
 
 #![allow(unused_assignments)]
 
-use std::{process::{Command, Output, ExitStatus},  rc::Rc, cell::RefCell, borrow::BorrowMut};
+use std::{rc::Rc, cell::RefCell, borrow::BorrowMut};
 
 use avd_funcs::AvdList;
 use slint::{WindowSize, LogicalSize, Weak};
@@ -42,27 +42,14 @@ fn on_row_changed(row: i32, ui_handle: &Weak<AppWindow>, avds: &Rc<RefCell<AvdLi
 
     let binding = avds.borrow();
     let info = binding.iter().nth(row as usize).unwrap();
-    let mut cmd = Command::new("pgrep");
-
-    let cmd_output = match cmd.arg("-a").arg("qemu-system-").output() {
-        Ok(a) => a,
-        Err(_) => Output {
-            status: ExitStatus::default(),
-            stdout: Vec::new(),
-            stderr: Vec::new(),
-        },
-    };
-
-    let out = String::from_utf8(cmd_output.stdout.to_vec()).unwrap();
-    let choose1 = "-avd ".to_owned() + &info.avd_id;
-    let choose2 = "@".to_owned() + &info.avd_id;
-    let out = out.split('\n').find(|e| e.contains(&choose1) || e.contains(&choose2)).unwrap_or("").trim();
+    let is_running = avd_funcs::is_avd_running(&binding, &info.avd_id) > 0;
 
     ui.set_details_btn_enabled(true);
-    ui.set_edit_btn_enabled(out.is_empty());
-    ui.set_delete_btn_enabled(out.is_empty());
-    ui.set_repair_btn_enabled(out.is_empty());
-    ui.set_start_btn_enabled(out.is_empty());
+    ui.set_edit_btn_enabled(!is_running);
+    ui.set_delete_btn_enabled(!is_running);
+    ui.set_repair_btn_enabled(!is_running);
+    ui.set_start_btn_enabled(true);
+    ui.set_start_btn_title(if is_running { "Stop".into() } else { "Start".into() })
 }
 
 fn main() -> Result<(), slint::PlatformError> {
@@ -77,8 +64,9 @@ fn main() -> Result<(), slint::PlatformError> {
 
     let ui_handle = ui.as_weak();
     let ui_handle_clone = Rc::new(RefCell::new(ui_handle.clone()));
+
     ui.on_table_current_row_changed(move |row: i32| {
-        on_row_changed(row, &ui_handle, &avds_read_clone)
+        on_row_changed(row, &ui_handle, &avds_read_clone);
     });
 
     ui.on_edit_btn_press(move || {
