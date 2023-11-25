@@ -24,7 +24,10 @@ use std::env::var;
 use std::fs::read_dir;
 use std::path::Path;
 
-pub fn list_avds() -> LinkedList<AvdItem> {
+pub type AvdList = LinkedList<AvdItem>;
+pub type AvdRows = ModelRc<ModelRc<StandardListViewItem>>;
+
+pub fn list_avds() -> AvdList {
     let sdk_home: String = var("ANDROID_SDK_HOME").expect("Please set ANDROID_SDK_HOME variable!");
     let mut out: LinkedList<AvdItem> = LinkedList::new();
 
@@ -56,9 +59,9 @@ pub fn list_avds() -> LinkedList<AvdItem> {
     out
 }
 
-pub fn get_avds_as_slint_model() -> ModelRc<ModelRc<StandardListViewItem>> {
-    let vecs: Vec<ModelRc<StandardListViewItem>> = list_avds().iter().map(|s| {
-        let item = vec!(
+pub fn convert_avd_list_to_slint_model(items: &AvdList) -> AvdRows {
+    let vecs: Vec<ModelRc<StandardListViewItem>> = items.iter().map(|s: &AvdItem| {
+        let item: Vec<StandardListViewItem> = vec!(
             get_list_view_item(&s.avd_display_name),
             get_list_view_item(&s.avd_sdk_level.to_string()),
             get_list_view_item(&s.tag_display),

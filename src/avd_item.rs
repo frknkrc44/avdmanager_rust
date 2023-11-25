@@ -15,6 +15,7 @@
  *   along with avdmanager_rust.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
  #[derive(Clone)]
 pub struct AvdItem {
     pub avd_id: String,

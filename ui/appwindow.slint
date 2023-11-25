@@ -1,14 +1,47 @@
+/*
+ *  This file is part of avdmanager_rust.
+ *
+ *  avdmanager_rust is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  avdmanager_rust is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *   along with avdmanager_rust.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import {Button, VerticalBox, StandardTableView, HorizontalBox} from "std-widgets.slint";
 
 export component AppWindow inherits Window {
     title: "AVD Manager";
 
-    property <length> btn-height : 32px;
+    property <length> btn-height: 32px;
 
     in property <[[StandardListViewItem]]> avdlist: [];
 
+    in-out property <bool> edit-btn-enabled: false;
+    in-out property <bool> delete-btn-enabled: false;
+    in-out property <bool> repair-btn-enabled: false;
+    in-out property <bool> details-btn-enabled: false;
+    in-out property <bool> start-btn-enabled: false;
+
+    callback edit-btn-press();
+    callback delete-btn-press();
+    callback repair-btn-press();
+    callback details-btn-press();
+    callback start-btn-press();
+    callback refresh-btn-press();
+
+    callback table-current-row-changed(int);
+
     HorizontalBox {
         table := StandardTableView {
+            current-row-changed(row) => { table-current-row-changed(row) }
             columns: [
                 { title: "Name" },
                 { title: "SDK Level" },
@@ -25,38 +58,44 @@ export component AppWindow inherits Window {
             }
 
             edit_btn := Button {
+                clicked => { edit-btn-press() }
                 text: "Edit";
-                enabled: false;
+                enabled: edit-btn-enabled;
                 height: btn-height;
             }
 
             delete_btn := Button {
+                clicked => { delete-btn-press() }
                 text: "Delete";
-                enabled: false;
+                enabled: delete-btn-enabled;
                 height: btn-height;
             }
 
             repair_btn := Button {
+                clicked => { repair-btn-press() }
                 text: "Repair";
-                enabled: false;
+                enabled: repair-btn-enabled;
                 height: btn-height;
             }
 
             details_btn := Button {
+                clicked => { details-btn-press() }
                 text: "Details";
-                enabled: false;
+                enabled: details-btn-enabled;
                 height: btn-height;
             }
 
             start_btn := Button {
+                clicked => { start-btn-press() }
                 text: "Start";
-                enabled: false;
+                enabled: start-btn-enabled;
                 height: btn-height;
             }
 
             VerticalBox { height: btn-height * 4; }
 
             refresh_btn := Button {
+                clicked => { refresh-btn-press() }
                 text: "Refresh";
                 height: btn-height;
             }

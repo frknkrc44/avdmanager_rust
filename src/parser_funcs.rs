@@ -78,11 +78,11 @@ pub fn parse_ini_to_avd(path: String) -> AvdItem {
     let mut vm_heap_size: u16 = 0;
 
     for line in contents.lines() {
-        let pair: Vec<&str> = line.splitn(2, "=").collect();
+        let pair: Vec<&str> = line.splitn(2, '=').collect();
 
         match pair[0].trim() {
             _AVD_ID_KEY => avd_id = pair[1].trim().to_string(),
-            _PLAY_STORE_ENABLED_KEY => play_store_enabled = pair[1].trim().to_string() == "true",
+            _PLAY_STORE_ENABLED_KEY => play_store_enabled = pair[1].trim() == "true",
             _ABI_TYPE_KEY => abi_type = pair[1].trim().to_string(),
             _AVD_DISPLAY_NAME_KEY => avd_display_name = pair[1].trim().to_string(),
             _AVD_ENCODING_KEY => avd_encoding = pair[1].trim().to_string(),
@@ -138,58 +138,58 @@ pub fn parse_ini_to_avd(path: String) -> AvdItem {
         }
     }
 
-    let sdk_level = parse_u16(&image_sys_dir.split("/").nth(1).unwrap().replace("android-", ""));
+    let avd_sdk_level = parse_u16(&image_sys_dir.split('/').nth(1).unwrap().replace("android-", ""));
 
     AvdItem {
-        avd_id: avd_id,
-        play_store_enabled: play_store_enabled,
-        abi_type: abi_type,
-        avd_display_name: avd_display_name,
-        avd_encoding: avd_encoding,
-        avd_sdk_level: sdk_level,
-        userdata_size: userdata_size,
-        fastboot_chosen_snapshot_file: fastboot_chosen_snapshot_file,
-        fastboot_force_chosen_snapshot_boot: fastboot_force_chosen_snapshot_boot,
-        fastboot_force_cold_boot: fastboot_force_cold_boot,
-        fastboot_force_fast_boot: fastboot_force_fast_boot,
-        hw_accelerometer: hw_accelerometer,
-        hw_arc: hw_arc,
-        hw_audio_input: hw_audio_input,
-        hw_battery: hw_battery,
-        hw_camera_back: hw_camera_back,
-        hw_camera_front: hw_camera_front,
-        hw_cpu_arch: hw_cpu_arch,
-        hw_cpu_ncore: hw_cpu_ncore,
-        hw_dpad: hw_dpad,
-        hw_device_hash2: hw_device_hash2,
-        hw_device_manufacturer: hw_device_manufacturer,
-        hw_device_name: hw_device_name,
-        hw_gps: hw_gps,
-        hw_gpu_enabled: hw_gpu_enabled,
-        hw_gpu_mode: hw_gpu_mode,
-        hw_initial_orientation: hw_initial_orientation,
-        hw_keyboard: hw_keyboard,
-        hw_lcd_density: hw_lcd_density,
-        hw_lcd_height: hw_lcd_height,
-        hw_lcd_width: hw_lcd_width,
-        hw_main_keys: hw_main_keys,
-        hw_ram_size: hw_ram_size,
-        hw_sd_card: hw_sd_card,
-        hw_sensors_orientation: hw_sensors_orientation,
-        hw_sensors_proximity: hw_sensors_proximity,
-        hw_track_ball: hw_track_ball,
-        image_sys_dir: image_sys_dir,
-        runtime_network_latency: runtime_network_latency,
-        runtime_network_speed: runtime_network_speed,
-        sd_card_size: sd_card_size,
-        show_device_frame: show_device_frame,
-        skin_dynamic: skin_dynamic,
-        skin_name: skin_name,
-        skin_path: skin_path,
-        skin_path_backup: skin_path_backup,
-        tag_display: tag_display,
-        tag_id: tag_id,
-        vm_heap_size: vm_heap_size,
+        avd_id,
+        play_store_enabled,
+        abi_type,
+        avd_display_name,
+        avd_encoding,
+        avd_sdk_level,
+        userdata_size,
+        fastboot_chosen_snapshot_file,
+        fastboot_force_chosen_snapshot_boot,
+        fastboot_force_cold_boot,
+        fastboot_force_fast_boot,
+        hw_accelerometer,
+        hw_arc,
+        hw_audio_input,
+        hw_battery,
+        hw_camera_back,
+        hw_camera_front,
+        hw_cpu_arch,
+        hw_cpu_ncore,
+        hw_dpad,
+        hw_device_hash2,
+        hw_device_manufacturer,
+        hw_device_name,
+        hw_gps,
+        hw_gpu_enabled,
+        hw_gpu_mode,
+        hw_initial_orientation,
+        hw_keyboard,
+        hw_lcd_density,
+        hw_lcd_height,
+        hw_lcd_width,
+        hw_main_keys,
+        hw_ram_size,
+        hw_sd_card,
+        hw_sensors_orientation,
+        hw_sensors_proximity,
+        hw_track_ball,
+        image_sys_dir,
+        runtime_network_latency,
+        runtime_network_speed,
+        sd_card_size,
+        show_device_frame,
+        skin_dynamic,
+        skin_name,
+        skin_path,
+        skin_path_backup,
+        tag_display,
+        tag_id,
+        vm_heap_size,
     }
 }
 
@@ -297,11 +297,7 @@ fn parse_u64(value: &str) -> u64 {
 
 fn parse_str_to_u64(value: &str) -> u64 {
     let split = value.split_at(value.len() - 1);
-
-    let num: u64 = match split.0.parse::<u64>() {
-        Ok(t) => t,
-        Err(_) => 0,
-    };
+    let num: u64 = split.0.parse::<u64>().unwrap_or(0);
 
     match split.1 {
         "P" => PIB * num,
@@ -313,7 +309,7 @@ fn parse_str_to_u64(value: &str) -> u64 {
     }
 }
 
-fn parse_u64_to_str<'a>(value: u64) -> String {
+fn parse_u64_to_str(value: u64) -> String {
     if value <= KIB {
         return value.to_string();
     }
