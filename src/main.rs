@@ -17,16 +17,19 @@
 
 #![allow(unused_assignments)]
 
-use std::{rc::Rc, cell::RefCell, borrow::BorrowMut};
-
-use avd_funcs::AvdList;
-use slint::{WindowSize, LogicalSize, Weak};
-slint::include_modules!();
-
 mod avd_funcs;
 mod avd_item;
 mod r#const;
 mod parser_funcs;
+mod sys_img_retriever;
+
+use std::{rc::Rc, cell::RefCell, borrow::BorrowMut};
+
+use avd_funcs::AvdList;
+use slint::{WindowSize, LogicalSize, Weak};
+use tokio::runtime::Builder;
+
+slint::include_modules!();
 
 fn on_row_changed(row: i32, ui_handle: &Weak<AppWindow>, avds: &Rc<RefCell<AvdList>>) {
     let ui = ui_handle.unwrap();
@@ -95,6 +98,9 @@ fn main() -> Result<(), slint::PlatformError> {
         *avds.borrow_mut() = Rc::new(RefCell::new(new_avds.clone()));
         ui.set_avdlist(avd_funcs::convert_avd_list_to_slint_model(&new_avds));
     });
+
+    let rt = Builder::new_current_thread().enable_all().build().unwrap();
+    let _ = rt.handle().block_on(sys_img_retriever::download_sdk_lists());
 
     ui.run()
 }

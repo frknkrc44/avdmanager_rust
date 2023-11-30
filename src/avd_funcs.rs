@@ -95,9 +95,9 @@ pub fn filter_running_avds(items: &AvdList) -> RunningList {
     let mut out_list: RunningList = LinkedList::new();
 
     for item in items.iter() {
-        let id = &item.avd_id;
-        let choose1 = "-avd ".to_owned() + &id;
-        let choose2 = "@".to_owned() + &id;
+        let id = item.avd_id.as_str();
+        let choose1: String = "-avd ".to_owned() + id;
+        let choose2: String = "@".to_owned() + id;
         let filter = stdout.split('\n').find(|e| e.contains(&choose1) || e.contains(&choose2)).unwrap_or("").trim();
         if !filter.is_empty() {
             let pid = filter.split(' ').nth(0).unwrap_or("").parse::<u32>().unwrap_or(0);
