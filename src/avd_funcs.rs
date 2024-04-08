@@ -111,7 +111,7 @@ pub fn filter_running_avds(items: &AvdList) -> RunningList {
 pub fn is_avd_running(items: &AvdList, avd_id: &str) -> u32 {
     let running = filter_running_avds(items);
     let contains: Vec<&(u32, String)> = running.iter().filter(|e| e.1 == avd_id).collect();
-    
+
     if contains.is_empty() {
         0
     } else {

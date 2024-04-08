@@ -39,7 +39,7 @@ async fn download_sdk_list(link: &str) -> Result<String, Box<dyn std::error::Err
     let path = temp_dir().as_path().to_str().unwrap().to_owned() + "/" + base_path;
 
     println!("{}: {}", path, total_size);
-    
+
     let mut file = File::create(&path)
         .or(Err(format!("ERROR: Failed to create file '{}'", &path)))?;
     file.write_all(out.as_bytes())
